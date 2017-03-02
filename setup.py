@@ -2,6 +2,6 @@ from setuptools import setup
 
 setup(
     name='keras-visuals',
-    version='0.1',
+    version='0.1.1',
     scripts=['visual_callbacks.py']
 )

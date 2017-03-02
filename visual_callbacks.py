@@ -1,19 +1,19 @@
 from keras.callbacks import Callback
-import matplotlib.pyplot as plt    
-import matplotlib.patches as mpatches  
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 from sklearn.metrics import confusion_matrix
 import itertools
 import numpy as np
 
 
 class AccLossPlotter(Callback):
-    """Plot training Accuracy and Loss values on a Matplotlib graph. 
+    """Plot training Accuracy and Loss values on a Matplotlib graph.
 
     The graph is updated by the 'on_epoch_end' event of the Keras Callback class
 
     # Arguments
         graphs: list with some or all of ('acc', 'loss')
-        save_graph: Save graph as an image on Keras Callback 'on_train_end' event 
+        save_graph: Save graph as an image on Keras Callback 'on_train_end' event
 
     """
 
@@ -42,7 +42,7 @@ class AccLossPlotter(Callback):
         epochs = [x for x in range(self.epoch_count)]
 
         count_subplots = 0
-        
+
         if 'acc' in self.graphs:
             count_subplots += 1
             plt.subplot(self.num_subplots, 1, count_subplots)
@@ -55,7 +55,7 @@ class AccLossPlotter(Callback):
             red_patch = mpatches.Patch(color='red', label='Test')
             blue_patch = mpatches.Patch(color='blue', label='Train')
 
-            plt.legend(handles=[red_patch, blue_patch], loc=4)
+            plt.legend(handles=[red_patch, blue_patch], loc=2)
 
         if 'loss' in self.graphs:
             count_subplots += 1
@@ -69,8 +69,8 @@ class AccLossPlotter(Callback):
             red_patch = mpatches.Patch(color='red', label='Test')
             blue_patch = mpatches.Patch(color='blue', label='Train')
 
-            plt.legend(handles=[red_patch, blue_patch], loc=4)
-        
+            plt.legend(handles=[red_patch, blue_patch], loc=2)
+
         plt.draw()
         plt.pause(0.001)
 
@@ -82,7 +82,7 @@ class ConfusionMatrixPlotter(Callback):
     """Plot the confusion matrix on a graph and update after each epoch
 
     # Arguments
-        X_val: The input values 
+        X_val: The input values
         Y_val: The expected output values
         classes: The categories as a list of string names
         normalize: True - normalize to [0,1], False - keep as is
@@ -102,26 +102,26 @@ class ConfusionMatrixPlotter(Callback):
         plt.figure()
 
         plt.title(self.title)
-        
-        
+
+
 
     def on_train_begin(self, logs={}):
         pass
 
-    
-    def on_epoch_end(self, epoch, logs={}):    
+
+    def on_epoch_end(self, epoch, logs={}):
         plt.clf()
         pred = self.model.predict(self.X_val)
         max_pred = np.argmax(pred, axis=1)
         max_y = np.argmax(self.Y_val, axis=1)
         cnf_mat = confusion_matrix(max_y, max_pred)
-   
+
         if self.normalize:
             cnf_mat = cnf_mat.astype('float') / cnf_mat.sum(axis=1)[:, np.newaxis]
 
         thresh = cnf_mat.max() / 2.
         for i, j in itertools.product(range(cnf_mat.shape[0]), range(cnf_mat.shape[1])):
-            plt.text(j, i, cnf_mat[i, j],                                          
+            plt.text(j, i, cnf_mat[i, j],
                          horizontalalignment="center",
                          color="white" if cnf_mat[i, j] > thresh else "black")
 
@@ -133,10 +133,10 @@ class ConfusionMatrixPlotter(Callback):
         plt.yticks(tick_marks, self.classes)
 
         plt.colorbar()
-                                                                                                         
-        plt.tight_layout()                                                    
-        plt.ylabel('True label')                                              
-        plt.xlabel('Predicted label')                                         
+
+        plt.tight_layout()
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
         #plt.draw()
         plt.show()
         plt.pause(0.001)
